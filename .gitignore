@@ -1,0 +1,8 @@
+/authentication-service
+/classes-service
+/files-service
+/open-editor-service
+/users-service
+/zips-encrypting-service
+.env
+*.tar

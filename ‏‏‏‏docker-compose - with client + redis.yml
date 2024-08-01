@@ -68,16 +68,6 @@ services:
       - redis
 
 
-  zips-encrypting-service:
-    build:
-      context: ./zips-encrypting-service
-      dockerfile: Dockerfile
-    ports:
-      - "5000:5000"
-    environment:
-      NODE_ENV: production
-    restart: always
-
   mongo:
     build: ./mongo-setup
     ports:
@@ -101,7 +91,6 @@ services:
     command: server --console-address ":9001" /data/minioDB
     volumes:
       - minio-data:/data/minioDB
-  
   redis:
     build:
       context: ./redis
@@ -110,7 +99,15 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data/redisDB
+      
+  nextjs-client:
+    build: ./../client
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+    restart: always
+
 volumes:
   mongo:
   minio-data:
-  redis-data:

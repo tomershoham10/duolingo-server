@@ -1,0 +1,6 @@
+FROM mongo:5.0.11
+EXPOSE 27017
+RUN true
+ADD ./initiate_rs.sh ./initiate_rs.sh
+RUN true
+CMD [ "bash", "./initiate_rs.sh" ]

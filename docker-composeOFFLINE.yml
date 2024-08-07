@@ -1,0 +1,123 @@
+version: "3.8"
+services:
+  authentication-service:
+    build:
+      context: ./authentication-service
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./authentication-service/.env
+    environment:
+      NODE_ENV: production
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    restart: always
+    depends_on:
+      - redis
+
+  users-service:
+    build:
+      context: ./users-service
+      dockerfile: Dockerfile
+    ports:
+      - "4001:4001"
+    env_file:
+      - ./users-service/.env
+    environment:
+      NODE_ENV: production
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    restart: always
+    depends_on:
+      - mongo
+      - redis
+  
+  classes-service:
+    build:
+      context: ./classes-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./classes-service/.env
+    environment:
+      NODE_ENV: production
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    restart: always
+    depends_on:
+      - mongo
+      - redis
+  
+  files-service:
+    build:
+      context: ./files-service
+      dockerfile: Dockerfile
+    ports:
+      - "4002:4002"
+    env_file:
+      - ./files-service/.env
+    environment:
+      NODE_ENV: production
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    restart: always
+    depends_on:
+      - minio
+      - redis
+
+  zips-encrypting-service:
+      build:
+        context: ./zips-encrypting-service
+        dockerfile: Dockerfile
+      ports:
+        - "5000:5000"
+      environment:
+        NODE_ENV: production
+      restart: always
+
+  mongo:
+    build: ./mongo-setup
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo:/data/db
+
+    networks:
+      default:
+        aliases:
+          - mongo
+  
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: your-minio-access-key
+      MINIO_ROOT_PASSWORD: your-minio-secret-key
+    command: server --console-address ":9001" /data/minioDB
+    volumes:
+      - minio-data:/data/minioDB
+  redis:
+    build:
+      context: ./redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data/redisDB
+      
+  nextjs-client:
+    build: ./../client
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+    restart: always
+
+volumes:
+  mongo:
+  minio-data:
+  redis-data:

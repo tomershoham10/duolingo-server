@@ -3,8 +3,10 @@ FROM redis:latest
 
 # Install procps which includes sysctl
 
-# pretty sure bug reports its added with the redis since 2021
-# RUN apt-get update && apt-get install -y procps
+COPY . /usr/local/bin/
+
+#RUN apt-get update && apt-get install -y procps
+RUN apt-get install -y /usr/local/bin/apt/*.deb
 
 # Copy the entrypoint script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
